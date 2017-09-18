@@ -1,0 +1,346 @@
+.water-im{
+	position: relative;
+    width: 100%;
+    height: 100%;
+    min-width: 1200px;
+    background: url(images/main-bg.jpg) no-repeat;
+    background-size: 100%;
+}
+
+.water-conversation-box{
+	height: 100%;
+	width: 300px;
+	min-width: 300px;
+	float: left;
+	position: relative;
+}
+
+.water-convesation-search{
+	border-right: 1px solid #4A6B90;
+}
+
+.water-conversation-search-input{
+    height: 25px;
+    margin-top: 18px;
+    margin-left: 8px;
+    width: 240px;
+    background: #53779E;
+    color: #FFF;
+}
+
+.water-conversation-search-input::-webkit-input-placeholder{
+	color: #FFF;
+}
+
+.water-conversation-search-icon:after{
+    content: "\e60e";
+    position: relative;
+    top: 2px;
+    left: 5px;
+    color: #FFF;
+}
+
+.water-conversation-list{
+    height: 100%;
+    overflow-y: auto;
+    background: #696969;
+    opacity: 0.9;
+}
+
+.water-conversation{
+	width: 100%;
+    height: 60px;
+    position: relative;
+    box-sizing: border-box;
+    padding-top: 10px;
+    padding-left: 5px;
+    padding-right: 5px;
+    cursor: pointer;
+}
+
+.water-conversation:hover{
+	background-color: #F3F1F1;
+	transition: all 0.5s;
+}
+
+.water-conversation-user{
+	float: left;
+}
+
+.water-conversation-avatar{
+	margin-right: 10px;
+}
+
+.water-conversation-title{
+	font-size: 13px;
+}
+
+.water-conversation-message{
+	float: left;
+	color: #999;
+}
+
+.water-conversation-senttime{
+	float: right;
+    position: relative;
+    top: -18px;
+}
+
+.water-conversation-create{
+	height: 40px;
+	width: 40px;
+	border-radius: 20px;
+	background-color: #53779E;
+	position: absolute;
+	bottom: 15px;
+	right: 50px;
+}
+
+.water-conversation-create:hover{
+	background-color: #FFF;
+	transition: all 0.3s;
+}
+
+.water-conversation-create-btn{
+    box-sizing: border-box;
+    font-size: 25px;
+    color: #FFF;
+    padding-left: 13px;
+    display: block;
+    height: 40px;
+    width: 40px;
+}
+
+.water-conversation-new{
+    border-radius: 12px;
+    height: 70px;
+    width: 180px;
+    background-color: #6A6A6C;
+    position: absolute;
+    bottom: 15px;
+    right: -148px;
+    z-index: 99;
+    border: 1px solid #FFF;
+}
+
+.water-conversation-new:after,.water-conversation-new:before{
+	content: "";
+	border:8px solid;
+	position: absolute;
+	width: 0px;
+	display: block;
+	left: -16px;
+    bottom: 16px;
+}
+
+.water-conversation-new:after{
+	border-color: transparent #6A6A6C transparent transparent;
+	left: -15px;
+}
+
+.water-conversation-new:before{
+	border-color: transparent #FFF transparent transparent;
+}
+
+.water-conversation-newlist{
+	height: 70px;
+}
+
+.water-conversation-newitem{
+    height: 30px;
+    background-color: #6A6A6C;
+    margin-top: 5px;
+    box-sizing: border-box;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 9px;
+    border-radius: 11px;
+    border-bottom: 1px dotted #FFF;
+}
+
+.water-conversation-start{
+	cursor: pointer;
+	outline: none;
+	border: none;
+	background: none;
+	width: 90%;
+	color: #FFF;
+	border-radius: 5px;
+}
+
+.water-conversation-start:hover{
+	background-color: #5A5A5C;
+}
+
+.water-conversation-newitem-input{
+	background-color: #6A6A6C;
+	color: #FFF;
+}
+.water-conversation-newitem-input::-webkit-input-placeholder{
+	color: #FFF;
+}
+
+.water-main{
+	height: 100%;
+	margin-left: 300px;
+	position: relative;
+}
+
+.water-main-header{
+	box-sizing: border-box;
+	padding-top: 10px;
+}
+
+.water-main-header-avatar{
+	float: left;
+	margin-right: 10px;
+	margin-left: 10px;
+}
+
+.water-main-header-title{
+	line-height: 20px;
+	font-size: 14px;
+}
+
+.water-main-header-online{
+	line-height: 15px;
+	color: #FFF;
+}
+
+.water-message-list{
+	width: 100%;
+	position: absolute;
+	top: 60px;
+	bottom: 60px;
+	overflow-y: auto;
+}
+
+.water-message{
+	min-height: 40px;
+	margin-top: 10px;
+}
+
+.water-message-receiver{
+	color: #FFF;
+}
+
+.water-message-receiver-avatar{
+	float: left;
+	margin-left: 10px;
+}
+
+.water-message-content{
+    background-color: #696969;
+    max-width: 600px;
+    min-height: 40px;
+    word-wrap: break-word;
+    display: inline-block;
+    padding: 10px 5px 15px 5px;
+    box-sizing: border-box;
+    position: relative;
+    opacity: 0.9;
+    border-radius: 12px;
+}
+
+.water-message-senttime{
+	display: inline-block;
+	position: relative;
+	color: #333;
+}
+
+.water-message-receiver .water-message-senttime{
+	top: 16px;
+    left: -43px;
+}
+
+.water-message-receiver .water-message-content{
+    margin-left: 18px;
+    border: 1px solid #999;
+}
+
+.water-message-receiver .water-message-content:before,.water-message-content:after{
+	content: "";
+	width:0px;
+	border:8px solid;
+	display: block;
+    position: absolute;
+}
+
+.water-message-receiver .water-message-content:before{
+	border-color:transparent #999 transparent transparent;
+	left: -17px;
+}
+
+.water-message-receiver .water-message-content:after{
+	border-color:transparent #696969 transparent transparent;
+	top: 10px;
+	left: -16px;
+}
+
+.water-message-sender-avatar{
+	float: right;
+	margin-right: 10px;
+}
+
+.water-message-sender .water-message-content{
+	float: right;
+	margin-right: 14px;
+	background-color: #FFF;
+	color: #0099FD;
+}
+
+.water-message-sender{
+    display: inline-block;
+    position: relative;
+    width: 100%;
+}
+
+.water-message-sender .water-message-senttime{
+    position: absolute;
+    bottom: -3px;
+    right: 75px;
+}
+
+
+.water-message-sender .water-message-content:after{
+	right: -15px;
+    top: 11px;
+    border-color: transparent transparent transparent #FFF;
+}
+
+.water-edior-box{
+	height: 60px;
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+}
+
+.water-editor-emojis{
+	height: 60px;
+	width: 60px;
+	float: left;
+	background: #FFF;
+}
+
+.water-editor-emoji-btn:after{
+    content: "\e739";
+    font-size: 30px;
+    position: absolute;
+    left: 10px;
+    top: 15px;
+}
+
+.water-editor-input{
+	background-color: yellow;
+	height: 60px;
+	margin-left: 60px;
+}
+
+.water-editor-input-content{
+	box-sizing: border-box;
+	padding: 10px;
+    width: 100%;
+    height: 60px;
+	max-height: 60px;
+	resize: none;
+}
