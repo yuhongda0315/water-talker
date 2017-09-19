@@ -277,6 +277,7 @@ server.on('upgrade', (request, socket, body) => {
 
                 sendConnectAck(ws, {
                     userId: userId,
+                    uId: 0,
                     stauts: ConnectState.connected
                 });
 
