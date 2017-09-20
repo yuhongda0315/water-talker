@@ -5,6 +5,8 @@ var server = http.createServer();
 var urlParser = require('urlparser');
 var util = require('underscore');
 
+var getUserInfo = require('./utils').getUserInfo;
+
 var nedb = require('nedb');
 
 var ErrorCode = {
@@ -102,46 +104,90 @@ var MessageDirection = {
     RECEIVED: 2
 };
 
-var database = new nedb({
-    filename: './data/storage.db',
+var messageDB = new nedb({
+    filename: 'data/storage.db',
+    autoload: true
+});
+
+var userDB = new nedb({
+    filename: 'data/user.db',
     autoload: true
 });
 
 var DBUtil = {
-    insertMessage: (params) => {
-        database.insert(params);
-    },
-    findMessageList: (params) => {
-        var promise = new Promise((resolve, reject) => {
-            var condition = {
-                type: params.type,
-                targetId: params.targetId,
-                sentTime: {
-                    $lt: params.sentTime
-                }
-            };
-            database.find(condition).sort({
-                sentTime: -1
-            }).limit(params.limit).exec((error, messageList) => {
-                if (error) {
-                    reject(error);
-                }
-                resolve(messageList);
+    message: {
+        insert: (params) => {
+            messageDB.insert(params);
+        },
+        findList: (params) => {
+            var promise = new Promise((resolve, reject) => {
+                var condition = {
+                    type: params.type,
+                    targetId: params.targetId,
+                    sentTime: {
+                        $lt: params.sentTime
+                    }
+                };
+                messageDB.find(condition).sort({
+                    sentTime: -1
+                }).limit(params.limit).exec((error, messageList) => {
+                    if (error) {
+                        reject(error);
+                    }
+                    resolve(messageList);
+                });
             });
-        });
-        return promise;
-    },
-    findRelationList: (params) => {
-        params = params || {};
-        var promise = new Promise((resolve, reject) => {
-            database.find(params, (error, messageList) => {
-                if (error) {
-                    reject(error);
-                }
-                resolve(messageList);
+            return promise;
+        },
+        findRelationList: (params) => {
+            params = params || {};
+            var promise = new Promise((resolve, reject) => {
+                messageDB.find(params, (error, messageList) => {
+                    if (error) {
+                        reject(error);
+                    }
+                    resolve(messageList);
+                });
             });
-        });
-        return promise;
+            return promise;
+        }
+    },
+    user: {
+        /*
+            user.id
+            user.name
+            user.portraitUri
+        */
+        insert: (user) => {
+            userDB.insert(user);
+        },
+        findAll: (params) => {
+            var userIds = params.userIds;
+            var promise = new Promise((resolve, reject) => {
+                userDB.find({
+                    id: {
+                        $in: userIds
+                    }
+                }, (error, ret) => {
+                    if (error) {
+                        reject(error);
+                    }
+                    resolve(ret);
+                });
+            });
+            return promise;
+        },
+        find: (params) => {
+            var promise = new Promise((resolve, reject) => {
+                userDB.find(params, (error, ret) => {
+                    if (error) {
+                        reject(error);
+                    }
+                    resolve(ret);
+                });
+            });
+            return promise;
+        }
     }
 };
 
@@ -167,7 +213,7 @@ var sendMessage = (socket, params) => {
 
     message.userId = socket.currentUserId;
 
-    DBUtil.insertMessage(message);
+    DBUtil.message.insert(message);
 
     message = toJSON(message);
 
@@ -181,12 +227,12 @@ var messageHandler = (ws, message) => {
         /* 
         var message = {
             topic: 'pMsgP',
-            content: {
-                objectName: 'WT:TxtMsg',
-                content: 'test'
-            },
+            objectName: 'WT:TxtMsg',
+            content: 'test',
             uId: 1,
             type: '会话类型',
+            senderUserId: '',
+            senderUserName: '',
             targetId: ''
         };
         */
@@ -195,7 +241,6 @@ var messageHandler = (ws, message) => {
             var params = {
                 message: message,
                 sentTime: Date.now(),
-                senderUserId: senderUserId,
                 direction: MessageDirection.SENT
             };
             sendMessage(ws, params);
@@ -213,11 +258,13 @@ var messageHandler = (ws, message) => {
             };
         */
         qryRelation: () => {
-            var userId = ws.currentUserId;
-            message.userId = userId;
             var uId = message.uId;
-
-            DBUtil.findRelationList().then(function(messageList) {
+            
+            var userId = ws.currentUserId;
+            var params = {
+                userId: userId
+            };
+            DBUtil.message.findRelationList(params).then(function(messageList) {
                 messageList = getDistinct(messageList);
                 sendResponse(ws, {
                     uId: uId,
@@ -244,10 +291,36 @@ var messageHandler = (ws, message) => {
                 sentTime: message.timestamp || Date.now(),
                 limit: message.limit || 20
             };
-            DBUtil.findMessageList(params).then(function(messageList) {
+            DBUtil.message.findList(params).then((messageList) => {
                 sendResponse(ws, {
                     uId: uId,
                     list: messageList
+                });
+            });
+        },
+        /*
+            var message = {
+                topic: 'qryUser',
+                userId: '1001',
+                uId: 4
+            };
+        */
+        qryUser: () => {
+            var user = DBUtil.user;
+            var uId = message.uId;
+            var userId = message.userId;
+            var params = {
+                userId: userId
+            };
+            user.find(params).then((userInfo) => {
+                userInfo = userInfo[0];
+                if (!userInfo) {
+                    userInfo = getUserInfo(userId);
+                    user.insert(userInfo);
+                }
+                sendResponse(ws, {
+                    uId: uId,
+                    user: userInfo
                 });
             });
         }

@@ -1,0 +1,34 @@
+<script id="water-conversation-list" type="text/x-template">
+	<div class="water-conversation-box">
+		<div class="water-header water-convesation-search">
+			<input type="text" class="water-input water-conversation-search-input" placeholder="请输入">
+			<i class="iconfont water-conversation-search-icon" title="搜索"></i>
+		</div>
+		<div class="water-conversation-list">
+			<div class="water-conversation" v-for="conversation in conversations">
+				<div class="water-conversation-user">
+					<div class="water-conversation-avatar water-avatar-img" :style="{'background-image': 'url(' + conversation.target.portraitUri +')'}"></div>
+				</div>
+				<div class="water-conversation-title">{{conversation.target.name}}</div>
+				<div class="water-conversation-message">
+					<span class="water-conversation-sendername">{{conversation.sender.name}}:</span>
+					<em class="water-conversation-content">{{conversation.content}}</em>
+				</div>
+				<div class="water-conversation-senttime">{{conversation._sentTime}}</div>
+			</div>
+		</div>
+		<div class="water-conversation-create">
+			<a href="#" v-on:click="start" class="water-conversation-create-btn">+</a>
+		</div>
+		<div class="water-conversation-new" v-show="isStart">
+			<ul class="water-conversation-newlist">
+				<li class="water-conversation-newitem">
+					<input type="text" class="water-input water-conversation-newitem-input" placeholder="">
+				</li>
+				<li class="water-conversation-newitem">
+					<button class="water-conversation-start">发起会话</button>
+				</li>
+			</ul>
+		</div>
+	</div>
+</script>
