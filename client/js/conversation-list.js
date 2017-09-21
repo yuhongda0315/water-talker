@@ -1,7 +1,7 @@
 ((WaterIM) => {
 	var {components} = WaterIM;
 	components.getConversationList = (resolve, reject) => {
-		var {_service, _im} = WaterIM;
+		var {_service, _im, tools} = WaterIM;
 		var options = {
 			name: 'conversation-list',
 			template: '#water-conversation-list',
@@ -12,8 +12,25 @@
 				};
 			},
 			methods: {
-				start: function() {
+				showStart: function() {
 					this.isStart = !this.isStart;
+				},
+				start: function(){
+					create(this, _service);
+				},
+				show: function(item){
+					this.$router.push({
+						 name: 'conversation',
+						 params:{
+						 	type: item.type,
+						 	id: item.targetId
+						 }
+					});
+				},
+				isSelected: function(item){
+					var route = this.$route;
+					var {type, id:targetId} = route.params;
+					return tools.isMatch(item, {type: +type, targetId});
 				}
 			},
 			mounted: function() {
@@ -28,5 +45,9 @@
 		conversation.getList().then((list) => {
 			context.$data.conversations = list;
 		});
+	};
+
+	var create = (context, service) => {
+
 	};
 })(WaterIM);

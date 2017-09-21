@@ -74,6 +74,45 @@
 		};
 	})();
 
+	var getConversationId = (type, targetId) => {
+		return [type, targetId].join('_');
+	};
+
+	var userStore = {}
+
+	var conversations = null;
+
+	var messageStore = {};
+
+	var sendCommand = (data) => {
+		currentWs.send(tools.toJSON(data));
+	};
+
+	var queryLocal = (params, resolve, reject) => {
+		var topic = params.topic;
+		var topics = {
+			qryRelation: () => {
+				return conversations;
+			},
+			qryPMsg: () => {
+				var {
+					type,
+					targetId
+				} = params;
+				var messageKey = getConversationId(type, targetId);
+				return messageStore[messageKey];
+			},
+			qryUser: () => {
+				var {
+					userId
+				} = params;
+				return userStore[userId];
+			}
+		};
+		var handler = topics[topic] || tools.noop;
+		return handler();
+	};
+
 	var publish = (params) => {
 		var {
 			data
@@ -82,16 +121,58 @@
 		data.uId = uId;
 		return new Promise((resolve, reject) => {
 			promiseCache.set(uId, (list) => {
-					resolve(list);
-				},(error) => {
-					reject(error);
-				});
-			currentWs.send(tools.toJSON(data));
+				resolve(list);
+			}, (error) => {
+				reject(error);
+			});
+			var ret = queryLocal(data);
+			if (ret) {
+				resolve(ret);
+				return;
+			}
+			sendCommand(data);
 		});
 	};
 
+	/*
+		params.userId
+	*/
+	var getUserInfo = (params) => {
+		var _params = {
+			topic: 'qryUser'
+		};
+		tools.extend(_params, params);
+		return publish({
+			data: _params
+		}).then((ret) => {
+			var user = ret.user || ret;
+			userStore[user.userId] = user;
+			return user;
+		});
+	};
+
+	/*
+		params.targetId
+		params.type
+	*/
 	var createConversation = (params) => {
-		
+		var has = tools.some(conversations, (item) => {
+			return tools.isMatch(item, params);
+		});
+
+		if (!has) {
+			getUserInfo({
+				userId: targetId
+			}).then((user) => {
+				var conversation = {
+					target: user,
+					sentTime: Date.now(),
+					_sentTime: ''
+				};
+				tools.extend(conversation, params);
+				conversations.unshit(conversation);
+			});
+		}
 	};
 
 	var getConversations = (params) => {
@@ -101,22 +182,24 @@
 		return publish({
 			data: data
 		}).then((ret) => {
-			var list = ret.list;
-			return tools.map(list, (item) => {
+			var list = ret.list || ret;
+			conversations = tools.map(list, (item) => {
 				item._sentTime = tools.date2Hour(item.sentTime);
+				var content = item.content;
+				if (content) {
+					item.content = content.substr(0, 10) + '...';
+				}
 				return item;
 			});
+			return conversations;
 		});
 	};
 
-	// var getConversations = (params) => {
-	// 	return new Promise((resolve, reject) => {
-	// 		var list = [{"topic":"pMsgP","objectName":"WT:TxtMsg","content":"hello 1002","messageId":1,"type":1,"targetId":"1002","user":{"name":"朱之晴","portraitUri":"http://7xogjk.com1.z0.glb.clouddn.com/Frvl4caHWNcn3HirhUH-4VUfeZh5","userId":"1001"},"sentTime":1505880736602,"senderUserId":"1001","direction":1,"userId":"1001","_id":"HHDZVBb4pfUY93IN"}];
-	// 		resolve(list);
-	// 	});
-	// };
-
-
+	var getConversationInfo = (params) => {
+		return getUserInfo({
+			userId: params.targetId
+		});
+	};
 	var _timestamp = 0;
 
 	var setPullHisMsgsTime = (params) => {
@@ -128,12 +211,18 @@
 
 	var getHistoryMessages = (params) => {
 		var _params = {
+			limit: 20,
 			timestamp: _timestamp,
 			topic: 'qryPMsg'
 		};
 		tools.extend(params, _params);
 		return publish({
 			data: params
+		}).then((ret) => {
+			return tools.map(ret.list, (item) => {
+				item._sentTime = tools.date2Hour(item.sentTime);
+				return item;
+			}).reverse();
 		});
 	};
 	/*
@@ -155,16 +244,6 @@
 		});
 	};
 
-	var getUserInfo = (params) => {
-		var _params = {
-			topic: 'qryUser'
-		};
-		tools.extend(_params, params);
-		return publish({
-			data: _params
-		});
-	};
-
 	var apis = {
 		message: {
 			send: sendMessage,
@@ -172,6 +251,7 @@
 			setPullHisMsgsTime: setPullHisMsgsTime
 		},
 		conversation: {
+			getInfo: getConversationInfo,
 			create: createConversation,
 			getList: getConversations
 		},

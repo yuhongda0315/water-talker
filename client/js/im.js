@@ -31,6 +31,7 @@
 		config.userId = userId;
 		WaterService.connect(config).then((service) => {
 			WaterIM._service = service;
+			WaterIM.tools = WaterService.tools;
 			var im = WaterIM._im = new Vue({
 				el: config.el,
 				router: getRouter()

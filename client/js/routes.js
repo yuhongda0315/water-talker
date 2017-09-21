@@ -6,6 +6,7 @@
 		maps: [
 			{
 				path: '/conversation/:type/:id',
+				name: 'conversation',
 				components: {
 					list: components.getConversationList,
 					main: components.getConversation

@@ -2,207 +2,27 @@
    <div class="water-main">
 			<!-- 会话 Title -->
 			<div class="water-header water-main-header">
-				<div class="water-avatar-img water-main-header-avatar" style="background-image: url('http://oojs2ztoq.bkt.clouddn.com/Fsn4eFfMA8jBTcvcKJhIuS6dSMFp');">
+				<div v-if="conversation.portraitUri" class="water-avatar-img water-main-header-avatar" :style="{'background-image': 'url(' +  conversation.portraitUri + ')'}">
 				</div>
-				<div class="water-main-header-title">RCE-PC</div>
+				<div class="water-main-header-title">{{conversation.name}}</div>
 				<div class="water-main-header-online">在线</div>
 			</div>
 			<!-- 会话窗口消息列表 -->
 			<div class="water-message-list">
-				<div class="water-message water-message-receiver">
-					<div class="water-avatar-img water-message-receiver-avatar" style="background-image: url('http://oojs2ztoq.bkt.clouddn.com/Fsn4eFfMA8jBTcvcKJhIuS6dSMFp');"></div>
-					<div class="water-message-content">虽然我已经七十一岁了，但是呢我的耳朵还是很尖锐，那么刚才我在演讲的时候，我就听到外面高音喇叭的声音</div>
+				<div class="water-message" :class="isReceiver(message)" v-for="message in messageList">
+					<div class="water-avatar-img" :class="[isReceiver(message)+'-avatar']" :style="{'background-image': 'url('+ getPortrait(message) +')'}"></div>
+					<div class="water-message-content">{{message.content}}</div>
 					<div class="water-message-senttime">
-						<em>19:50</em>
-					</div>
-				</div>
-				<div class="water-message water-message-sender">
-					<div class="water-avatar-img water-message-sender-avatar" style="background-image: url('http://oojs2ztoq.bkt.clouddn.com/FtUu6gE0MuHHzx2F1mCz2bhyGSwf');"></div>
-					<div class="water-message-content">
-						为世界进文明，为人类造幸福，以青春之我，创建青春之人类
-					</div>
-					<div class="rong-clearfix"></div>
-					<div class="water-message-senttime">
-						<em>19:50</em>
+						<em>{{message._sentTime}}</em>
 					</div>
 				</div>
 				<div class="water-clearfix"></div>
 
-				<div class="water-message water-message-receiver">
-					<div class="water-avatar-img water-message-receiver-avatar" style="background-image: url('http://oojs2ztoq.bkt.clouddn.com/Fsn4eFfMA8jBTcvcKJhIuS6dSMFp');"></div>
-					<div class="water-message-content">一、关于香港的前途。如联合声明所确定的，1997年中国恢复对香港行使主权后将实行“一国两制”；</div>
-					<div class="water-message-senttime">
-						<em>19:50</em>
-					</div>
-				</div>
-				<div class="water-message water-message-sender">
-					<div class="water-avatar-img water-message-sender-avatar" style="background-image: url('http://oojs2ztoq.bkt.clouddn.com/FtUu6gE0MuHHzx2F1mCz2bhyGSwf');"></div>
-					<div class="water-message-content">
-						为世界进文明，为人类造幸福，以青春之我，创建青春之人类
-					</div>
-					<div class="rong-clearfix"></div>
-					<div class="water-message-senttime">
-						<em>19:50</em>
-					</div>
-				</div>
-				<div class="water-clearfix"></div>
-
-				<div class="water-message water-message-receiver">
-					<div class="water-avatar-img water-message-receiver-avatar" style="background-image: url('http://oojs2ztoq.bkt.clouddn.com/Fsn4eFfMA8jBTcvcKJhIuS6dSMFp');"></div>
-					<div class="water-message-content">虽然我已经七十一岁了，但是呢我的耳朵还是很尖锐，那么刚才我在演讲的时候，我就听到外面高音喇叭的声音</div>
-					<div class="water-message-senttime">
-						<em>19:50</em>
-					</div>
-				</div>
-				<div class="water-message water-message-sender">
-					<div class="water-avatar-img water-message-sender-avatar" style="background-image: url('http://oojs2ztoq.bkt.clouddn.com/FtUu6gE0MuHHzx2F1mCz2bhyGSwf');"></div>
-					<div class="water-message-content">
-						为世界进文明，为人类造幸福，以青春之我，创建青春之人类
-					</div>
-					<div class="rong-clearfix"></div>
-					<div class="water-message-senttime">
-						<em>19:50</em>
-					</div>
-				</div>
-				<div class="water-clearfix"></div>
-
-				<div class="water-message water-message-receiver">
-					<div class="water-avatar-img water-message-receiver-avatar" style="background-image: url('http://oojs2ztoq.bkt.clouddn.com/Fsn4eFfMA8jBTcvcKJhIuS6dSMFp');"></div>
-					<div class="water-message-content">虽然我已经七十一岁了，但是呢我的耳朵还是很尖锐，那么刚才我在演讲的时候，我就听到外面高音喇叭的声音</div>
-					<div class="water-message-senttime">
-						<em>19:50</em>
-					</div>
-				</div>
-				<div class="water-message water-message-sender">
-					<div class="water-avatar-img water-message-sender-avatar" style="background-image: url('http://oojs2ztoq.bkt.clouddn.com/FtUu6gE0MuHHzx2F1mCz2bhyGSwf');"></div>
-					<div class="water-message-content">
-						为世界进文明，为人类造幸福，以青春之我，创建青春之人类
-					</div>
-					<div class="rong-clearfix"></div>
-					<div class="water-message-senttime">
-						<em>19:50</em>
-					</div>
-				</div>
-				<div class="water-clearfix"></div>
-
-				<div class="water-message water-message-receiver">
-					<div class="water-avatar-img water-message-receiver-avatar" style="background-image: url('http://oojs2ztoq.bkt.clouddn.com/Fsn4eFfMA8jBTcvcKJhIuS6dSMFp');"></div>
-					<div class="water-message-content">虽然我已经七十一岁了，但是呢我的耳朵还是很尖锐，那么刚才我在演讲的时候，我就听到外面高音喇叭的声音</div>
-					<div class="water-message-senttime">
-						<em>19:50</em>
-					</div>
-				</div>
-				<div class="water-message water-message-sender">
-					<div class="water-avatar-img water-message-sender-avatar" style="background-image: url('http://oojs2ztoq.bkt.clouddn.com/FtUu6gE0MuHHzx2F1mCz2bhyGSwf');"></div>
-					<div class="water-message-content">
-						为世界进文明，为人类造幸福，以青春之我，创建青春之人类
-					</div>
-					<div class="rong-clearfix"></div>
-					<div class="water-message-senttime">
-						<em>19:50</em>
-					</div>
-				</div>
-				<div class="water-clearfix"></div>
-
-				<div class="water-message water-message-receiver">
-					<div class="water-avatar-img water-message-receiver-avatar" style="background-image: url('http://oojs2ztoq.bkt.clouddn.com/Fsn4eFfMA8jBTcvcKJhIuS6dSMFp');"></div>
-					<div class="water-message-content">虽然我已经七十一岁了，但是呢我的耳朵还是很尖锐，那么刚才我在演讲的时候，我就听到外面高音喇叭的声音</div>
-					<div class="water-message-senttime">
-						<em>19:50</em>
-					</div>
-				</div>
-				<div class="water-message water-message-sender">
-					<div class="water-avatar-img water-message-sender-avatar" style="background-image: url('http://oojs2ztoq.bkt.clouddn.com/FtUu6gE0MuHHzx2F1mCz2bhyGSwf');"></div>
-					<div class="water-message-content">
-						为世界进文明，为人类造幸福，以青春之我，创建青春之人类
-					</div>
-					<div class="rong-clearfix"></div>
-					<div class="water-message-senttime">
-						<em>19:50</em>
-					</div>
-				</div>
-				<div class="water-clearfix"></div>
-
-				<div class="water-message water-message-receiver">
-					<div class="water-avatar-img water-message-receiver-avatar" style="background-image: url('http://oojs2ztoq.bkt.clouddn.com/Fsn4eFfMA8jBTcvcKJhIuS6dSMFp');"></div>
-					<div class="water-message-content">虽然我已经七十一岁了，但是呢我的耳朵还是很尖锐，那么刚才我在演讲的时候，我就听到外面高音喇叭的声音</div>
-					<div class="water-message-senttime">
-						<em>19:50</em>
-					</div>
-				</div>
-				<div class="water-message water-message-sender">
-					<div class="water-avatar-img water-message-sender-avatar" style="background-image: url('http://oojs2ztoq.bkt.clouddn.com/FtUu6gE0MuHHzx2F1mCz2bhyGSwf');"></div>
-					<div class="water-message-content">
-						为世界进文明，为人类造幸福，以青春之我，创建青春之人类
-					</div>
-					<div class="rong-clearfix"></div>
-					<div class="water-message-senttime">
-						<em>19:50</em>
-					</div>
-				</div>
-				<div class="water-clearfix"></div>
-
-				<div class="water-message water-message-receiver">
-					<div class="water-avatar-img water-message-receiver-avatar" style="background-image: url('http://oojs2ztoq.bkt.clouddn.com/Fsn4eFfMA8jBTcvcKJhIuS6dSMFp');"></div>
-					<div class="water-message-content">虽然我已经七十一岁了，但是呢我的耳朵还是很尖锐，那么刚才我在演讲的时候，我就听到外面高音喇叭的声音</div>
-					<div class="water-message-senttime">
-						<em>19:50</em>
-					</div>
-				</div>
-				<div class="water-message water-message-sender">
-					<div class="water-avatar-img water-message-sender-avatar" style="background-image: url('http://oojs2ztoq.bkt.clouddn.com/FtUu6gE0MuHHzx2F1mCz2bhyGSwf');"></div>
-					<div class="water-message-content">
-						为世界进文明，为人类造幸福，以青春之我，创建青春之人类
-					</div>
-					<div class="rong-clearfix"></div>
-					<div class="water-message-senttime">
-						<em>19:50</em>
-					</div>
-				</div>
-				<div class="water-clearfix"></div>
-
-				<div class="water-message water-message-receiver">
-					<div class="water-avatar-img water-message-receiver-avatar" style="background-image: url('http://oojs2ztoq.bkt.clouddn.com/Fsn4eFfMA8jBTcvcKJhIuS6dSMFp');"></div>
-					<div class="water-message-content">虽然我已经七十一岁了，但是呢我的耳朵还是很尖锐，那么刚才我在演讲的时候，我就听到外面高音喇叭的声音</div>
-					<div class="water-message-senttime">
-						<em>19:50</em>
-					</div>
-				</div>
-				<div class="water-message water-message-sender">
-					<div class="water-avatar-img water-message-sender-avatar" style="background-image: url('http://oojs2ztoq.bkt.clouddn.com/FtUu6gE0MuHHzx2F1mCz2bhyGSwf');"></div>
-					<div class="water-message-content">
-						为世界进文明，为人类造幸福，以青春之我，创建青春之人类
-					</div>
-					<div class="rong-clearfix"></div>
-					<div class="water-message-senttime">
-						<em>19:50</em>
-					</div>
-				</div>
-				<div class="water-clearfix"></div>
-
-				<div class="water-message water-message-receiver">
-					<div class="water-avatar-img water-message-receiver-avatar" style="background-image: url('http://oojs2ztoq.bkt.clouddn.com/Fsn4eFfMA8jBTcvcKJhIuS6dSMFp');"></div>
-					<div class="water-message-content">虽然我已经七十一岁了，但是呢我的耳朵还是很尖锐，那么刚才我在演讲的时候，我就听到外面高音喇叭的声音</div>
-					<div class="water-message-senttime">
-						<em>19:50</em>
-					</div>
-				</div>
-				<div class="water-message water-message-sender">
-					<div class="water-avatar-img water-message-sender-avatar" style="background-image: url('http://oojs2ztoq.bkt.clouddn.com/FtUu6gE0MuHHzx2F1mCz2bhyGSwf');"></div>
-					<div class="water-message-content">
-						为世界进文明，为人类造幸福，以青春之我，创建青春之人类
-					</div>
-					<div class="rong-clearfix"></div>
-					<div class="water-message-senttime">
-						<em>19:50</em>
-					</div>
-				</div>
-				<div class="water-clearfix"></div>
 			</div>
 			<!-- 消息内容编辑区域 -->
 			<div class="water-edior-box">
 				<div class="water-editor-emojis">
-					<a href="" title="emoji" class="iconfont water-editor-emoji-btn"></a>
+					<a title="emoji" class="iconfont water-editor-emoji-btn"></a>
 				</div>
 				<div class="water-editor-input">
 					<textarea name="editor-input" class="water-input water-editor-input-content"></textarea>

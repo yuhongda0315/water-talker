@@ -5,7 +5,7 @@
 			<i class="iconfont water-conversation-search-icon" title="搜索"></i>
 		</div>
 		<div class="water-conversation-list">
-			<div class="water-conversation" v-for="conversation in conversations">
+			<div class="water-conversation" v-bind:class="{'water-selected':isSelected(conversation)}" v-for="conversation in conversations" v-on:click.stop="show(conversation)">
 				<div class="water-conversation-user">
 					<div class="water-conversation-avatar water-avatar-img" :style="{'background-image': 'url(' + conversation.target.portraitUri +')'}"></div>
 				</div>
@@ -18,12 +18,12 @@
 			</div>
 		</div>
 		<div class="water-conversation-create">
-			<a href="#" v-on:click="start" class="water-conversation-create-btn">+</a>
+			<a v-on:click="showStart" class="water-conversation-create-btn">+</a>
 		</div>
 		<div class="water-conversation-new" v-show="isStart">
 			<ul class="water-conversation-newlist">
 				<li class="water-conversation-newitem">
-					<input type="text" class="water-input water-conversation-newitem-input" placeholder="">
+					<input type="text" class="water-input water-conversation-newitem-input" placeholder="请输入 targetId">
 				</li>
 				<li class="water-conversation-newitem">
 					<button class="water-conversation-start">发起会话</button>

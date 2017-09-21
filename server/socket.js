@@ -286,7 +286,7 @@ var messageHandler = (ws, message) => {
             var uId = message.uId;
             message.userId = ws.currentUserId;
             var params = {
-                type: message.type,
+                type: +message.type,
                 targetId: message.targetId,
                 sentTime: message.timestamp || Date.now(),
                 limit: message.limit || 20
