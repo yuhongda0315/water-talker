@@ -7,6 +7,7 @@
 			template: '#water-conversation',
 			data: function(){
 				return {
+					content: '',
 					conversation: { },
 					messageList: []
 				};
@@ -18,6 +19,9 @@
 				getPortrait: function(message){
 					var user = message.sender;
 					return user.portraitUri;
+				},
+				send: function(){
+					sendMessage(this, _service, tools);
 				}
 			},
 			mounted: function(){
@@ -59,5 +63,25 @@
 		});
 	}
 
+	function resetEditor(context){
+		context.content = '';
+	}
+
+	function sendMessage(context, service, tools){
+		var content = context.content;
+		content = content.replace(/\n/g, '');
+		if (tools.isEqual(content.length, 0)) {
+			resetEditor(context);
+			return;
+		}
+		var {$route: {params:{id: targetId, type}}} = context;
+		var params = {
+            content: content,
+            type: +type,
+            targetId: targetId
+        };
+        resetEditor(context);
+        service.message.sendText(params);
+	}
 
 })(WaterIM);

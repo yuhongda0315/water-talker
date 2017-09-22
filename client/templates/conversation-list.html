@@ -10,7 +10,7 @@
 					<div class="water-conversation-avatar water-avatar-img" :style="{'background-image': 'url(' + conversation.target.portraitUri +')'}"></div>
 				</div>
 				<div class="water-conversation-title">{{conversation.target.name}}</div>
-				<div class="water-conversation-message">
+				<div class="water-conversation-message" v-if="conversation.sender">
 					<span class="water-conversation-sendername">{{conversation.sender.name}}:</span>
 					<em class="water-conversation-content">{{conversation.content}}</em>
 				</div>
@@ -23,10 +23,10 @@
 		<div class="water-conversation-new" v-show="isStart">
 			<ul class="water-conversation-newlist">
 				<li class="water-conversation-newitem">
-					<input type="text" class="water-input water-conversation-newitem-input" placeholder="请输入 targetId">
+					<input type="text" class="water-input water-conversation-newitem-input" placeholder="请输入 targetId" v-model="targetId" @keyup.enter="start">
 				</li>
 				<li class="water-conversation-newitem">
-					<button class="water-conversation-start">发起会话</button>
+					<button class="water-conversation-start" @click="start">发起会话</button>
 				</li>
 			</ul>
 		</div>

@@ -25,7 +25,7 @@
 					<a title="emoji" class="iconfont water-editor-emoji-btn"></a>
 				</div>
 				<div class="water-editor-input">
-					<textarea name="editor-input" class="water-input water-editor-input-content"></textarea>
+					<textarea v-model="content" name="editor-input" class="water-input water-editor-input-content" @keyup.enter.stop="send"></textarea>
 				</div>
 			</div>
 		</div>

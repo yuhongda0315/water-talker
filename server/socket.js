@@ -249,7 +249,12 @@ var messageHandler = (ws, message) => {
             var socket = socketCache.get(targetId);
             params.direction = MessageDirection.RECEIVED;
             message.targetId = senderUserId;
-            sendMessage(socket, params);
+            DBUtil.user.find({userId: senderUserId}).then((users) => {
+                var user = users[0];
+                delete message.uId;
+                message.target = user;
+                sendMessage(socket, params);
+            });
         },
         /*
             var message = {
@@ -259,7 +264,7 @@ var messageHandler = (ws, message) => {
         */
         qryRelation: () => {
             var uId = message.uId;
-            
+
             var userId = ws.currentUserId;
             var params = {
                 userId: userId
@@ -347,11 +352,19 @@ server.on('upgrade', (request, socket, body) => {
                 var userId = user.id;
                 ws.currentUserId = userId;
                 socketCache.set(userId, ws);
-
-                sendConnectAck(ws, {
-                    userId: userId,
-                    uId: 0,
-                    stauts: ConnectState.connected
+                DBUtil.user.find({
+                    userId: userId
+                }).then((userInfo) => {
+                    userInfo = userInfo[0];
+                    if (!userInfo) {
+                        userInfo = getUserInfo(userId);
+                        DBUtil.user.insert(userInfo);
+                    }
+                    sendConnectAck(ws, {
+                        user: userInfo,
+                        uId: 0,
+                        stauts: ConnectState.connected
+                    });
                 });
 
                 ws.on('message', (event) => {

@@ -4,6 +4,7 @@
 	} = depends;
 
 	var currentWs = null;
+	var currentUser = null;
 
 	var tools = {
 		stringFormat: (temp, data, regexp) => {
@@ -40,7 +41,9 @@
 		// 一次使用
 		date2Hour: (timestamp) => {
 			var date = new Date(timestamp);
-			return date.getHours() + ':' + date.getMinutes();
+			var min = String(date.getMinutes());
+			min = _.isEqual(min.length, 1) ? '0' + min : min;
+			return date.getHours() + ':' + min;
 		}
 	};
 
@@ -100,7 +103,11 @@
 					targetId
 				} = params;
 				var messageKey = getConversationId(type, targetId);
-				return messageStore[messageKey];
+				var msgList = messageStore[messageKey];
+				if (msgList) {
+					msgList.reverse();
+				}
+				return msgList;
 			},
 			qryUser: () => {
 				var {
@@ -160,9 +167,11 @@
 			return tools.isMatch(item, params);
 		});
 
+		var {targetId: userId} = params;
+
 		if (!has) {
 			getUserInfo({
-				userId: targetId
+				userId: userId
 			}).then((user) => {
 				var conversation = {
 					target: user,
@@ -170,7 +179,7 @@
 					_sentTime: ''
 				};
 				tools.extend(conversation, params);
-				conversations.unshit(conversation);
+				conversations.unshift(conversation);
 			});
 		}
 	};
@@ -186,8 +195,9 @@
 			conversations = tools.map(list, (item) => {
 				item._sentTime = tools.date2Hour(item.sentTime);
 				var content = item.content;
-				if (content) {
-					item.content = content.substr(0, 10) + '...';
+				var max = 10;
+				if (content.length > max) {
+					item.content = content.substr(0, max) + '...';
 				}
 				return item;
 			});
@@ -211,42 +221,86 @@
 
 	var getHistoryMessages = (params) => {
 		var _params = {
-			limit: 20,
+			limit: 80,
 			timestamp: _timestamp,
 			topic: 'qryPMsg'
 		};
+		var {type, targetId} = params;
 		tools.extend(params, _params);
 		return publish({
 			data: params
 		}).then((ret) => {
-			return tools.map(ret.list, (item) => {
+			var ret = ret.list || ret;
+			var list = tools.map(ret, (item) => {
 				item._sentTime = tools.date2Hour(item.sentTime);
 				return item;
 			}).reverse();
+			var key = getConversationId(type, targetId);
+			messageStore[key] = list;
+			return list;
 		});
 	};
 	/*
 		var message = {
-            objectName: 'WT:TxtMsg',
             content: 'test',
             type: 1,
             targetId: 'id'
         };
 	*/
-	var sendMessage = (message) => {
+	var sendText = (message) => {
 		var params = {
-			topic: 'pMsgP'
+			topic: 'pMsgP',
+			objectName: 'WT:TxtMsg',
+			senderUserId: currentUser.userId,
+			target: userStore[message.targetId],
+			sender: currentUser
 		};
 		tools.extend(message, params)
 
 		return publish({
 			data: message
+		}).then((msg) => {
+			_pushMessage(msg);
 		});
+	};
+
+	var updateConversation = (message) => {
+		var {type, targetId} = message;
+		var isSame = (item) => {
+			return tools.isMatch(item, {type, targetId});
+		};
+		var has = tools.some(conversations, (item) => {
+			return isSame(item);
+		});
+		var update = () => {
+			var conversationList = tools.difference(conversations, tools.filter(conversations, (item) => {
+				return isSame(item);
+			}));
+			message._sentTime = tools.date2Hour(message.sentTime);
+			conversationList.unshift(message);
+
+			var len = conversations.length;
+			conversations.splice(0,len);
+			tools.each(conversationList, (item) => {
+				conversations.push(item);
+			});
+		};
+		var push = () => {
+			conversations.unshift(message);
+		};
+		return (has ? update : push)();
+	};
+
+	var _pushMessage = (message) =>{
+		var {type, targetId} = message;
+		var key = getConversationId(type, targetId);
+		messageStore[key].push(message);
+		updateConversation(message);
 	};
 
 	var apis = {
 		message: {
-			send: sendMessage,
+			sendText: sendText,
 			getList: getHistoryMessages,
 			setPullHisMsgsTime: setPullHisMsgsTime
 		},
@@ -274,14 +328,20 @@
 						uId
 					} = data;
 					var promise = promiseCache.get(uId);
-					promise.resolve(data);
+					if (promise) {
+						promise.resolve(data);
+						return;
+					}
+					_pushMessage(data);
+					
 				},
 				onerror: (error) => {
 					console.log(error);
 				}
 			});
 			var uId = getMessageId();
-			promiseCache.set(uId, () => {
+			promiseCache.set(uId, (ret) => {
+				currentUser = ret.user;
 				resolve(apis);
 			}, reject);
 		});

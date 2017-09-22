@@ -3,7 +3,7 @@
     width: 100%;
     height: 100%;
     min-width: 1200px;
-    background: url(images/main-bg.jpg) no-repeat;
+    background: url(images/main-bg-01.jpg) no-repeat;
     background-size: 100%;
 }
 
@@ -231,6 +231,7 @@
 
 .water-message-content{
     background-color: #696969;
+    min-width: 45px;
     max-width: 600px;
     min-height: 40px;
     word-wrap: break-word;
