@@ -265,6 +265,7 @@
 	};
 
 	var updateConversation = (message) => {
+		message = JSON.parse(tools.toJSON(message));
 		var {type, targetId} = message;
 		var isSame = (item) => {
 			return tools.isMatch(item, {type, targetId});
@@ -277,6 +278,10 @@
 				return isSame(item);
 			}));
 			message._sentTime = tools.date2Hour(message.sentTime);
+			var content = message.content;
+			if (content.length > 10) {
+				message.content = content.substr(0, 10) + '...';
+			}
 			conversationList.unshift(message);
 
 			var len = conversations.length;
