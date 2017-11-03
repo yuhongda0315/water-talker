@@ -17,8 +17,75 @@
 
 		<router-view></router-view>
 	</div>
-	<!--#include virtual="templates/conversation-list.html" -->
-	<!--#include virtual="templates/conversation.html" -->
+	<script id="water-conversation-list" type="text/x-template">
+		<div class="water-conversation-box">
+			<div class="water-header water-convesation-search">
+				<input type="text" class="water-input water-conversation-search-input" placeholder="请输入">
+				<i class="iconfont water-conversation-search-icon" title="搜索"></i>
+			</div>
+			<div class="water-conversation-list">
+				<div class="water-conversation" v-bind:class="{'water-selected':isSelected(conversation)}" v-for="conversation in conversations" v-on:click.stop="show(conversation)">
+					<div class="water-conversation-user">
+						<div class="water-conversation-avatar water-avatar-img" :style="{'background-image': 'url(' + conversation.target.portraitUri +')'}"></div>
+					</div>
+					<div class="water-conversation-title">{{conversation.target.name}}</div>
+					<div class="water-conversation-message" v-if="conversation.sender">
+						<span class="water-conversation-sendername">{{conversation.sender.name}}:</span>
+						<em class="water-conversation-content">{{conversation.content}}</em>
+					</div>
+					<div class="water-conversation-senttime">{{conversation._sentTime}}</div>
+				</div>
+			</div>
+			<div class="water-conversation-create">
+				<a v-on:click="showStart" class="water-conversation-create-btn">+</a>
+			</div>
+			<div class="water-conversation-new" v-show="isStart">
+				<ul class="water-conversation-newlist">
+					<li class="water-conversation-newitem">
+						<input type="text" class="water-input water-conversation-newitem-input" placeholder="请输入 targetId" v-model="targetId" @keyup.enter="start">
+					</li>
+					<li class="water-conversation-newitem">
+						<button class="water-conversation-start" @click="start">发起会话</button>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</script>
+
+	<script id="water-conversation" type="text/x-template">
+	   <div class="water-main">
+				<!-- 会话 Title -->
+				<div class="water-header water-main-header">
+					<div v-if="conversation.portraitUri" class="water-avatar-img water-main-header-avatar" :style="{'background-image': 'url(' +  conversation.portraitUri + ')'}">
+					</div>
+					<div class="water-main-header-title">{{conversation.name}}</div>
+					<div class="water-main-header-online">在线</div>
+				</div>
+				<!-- 会话窗口消息列表 -->
+				<div class="water-message-list">
+					<div class="water-message" :class="isReceiver(message)" v-for="message in messageList">
+						<div class="water-avatar-img" :class="[isReceiver(message)+'-avatar']" :style="{'background-image': 'url('+ getPortrait(message) +')'}"></div>
+						<div class="water-message-content">{{message.content}}</div>
+						<div class="water-message-senttime">
+							<em>{{message._sentTime}}</em>
+						</div>
+					</div>
+					<div class="water-clearfix"></div>
+
+				</div>
+				<!-- 消息内容编辑区域 -->
+				<div class="water-edior-box">
+					<div class="water-editor-emojis">
+						<a title="emoji" class="iconfont water-editor-emoji-btn"></a>
+					</div>
+					<div class="water-editor-input">
+						<textarea v-model="content" name="editor-input" class="water-input water-editor-input-content" @keyup.enter.stop="send"></textarea>
+					</div>
+				</div>
+			</div>
+	</script>
+
+	
 </body>
 <script src="lib/vue-2.2.4.js"></script>
 <script src="lib/vue-router-2.2.1.js"></script>
