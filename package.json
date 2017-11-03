@@ -4,6 +4,7 @@
   "description": "IM ",
   "main": "index.js",
   "scripts": {
+    "server": "node server/socket.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

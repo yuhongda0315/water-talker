@@ -1,3 +1,5 @@
+exports._ = require('underscore');
+
 exports.getUserInfo = (userId) => {
 
 	var nameList = "梦琪忆柳之桃慕青问兰尔岚元香初夏沛菡傲珊曼文乐菱痴珊恨玉惜文香寒新柔语蓉海安夜蓉涵柏水桃醉蓝春儿语琴从彤傲晴语兰又菱碧彤元霜怜梦紫寒妙彤曼易南莲紫翠雨寒易烟如萱若南寻真晓亦向珊慕灵以蕊寻雁映易雪柳孤岚笑霜海云";
@@ -76,5 +78,20 @@ exports.getUserInfo = (userId) => {
 		name: name,
 		portraitUri: portrait
 	};
+};
 
+exports.stringFormat = (temp, data, regexp) => {
+	if (!(Object.prototype.toString.call(data) === "[object Array]")) data = [data];
+	var ret = [];
+	for (var i = 0, j = data.length; i < j; i++) {
+		ret.push(replaceAction(data[i]));
+	}
+	return ret.join("");
+
+	function replaceAction(object) {
+		return temp.replace(regexp || (/\\?\{([^}]+)\}/g), function(match, name) {
+			if (match.charAt(0) == '\\') return match.slice(1);
+			return (object[name] != undefined) ? object[name] : '{' + name + '}';
+		});
+	}
 };

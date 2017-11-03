@@ -1,11 +1,13 @@
 var WebSocket = require('faye-websocket');
 var http = require('http');
 var server = http.createServer();
-
+var config = require('../config.json');
 var urlParser = require('urlparser');
-var util = require('underscore');
+var utils = require('./utils');
 
-var getUserInfo = require('./utils').getUserInfo;
+var _ = utils._;
+var getUserInfo = utils.getUserInfo;
+var stringFormat = utils.stringFormat;
 
 var nedb = require('nedb');
 
@@ -27,14 +29,14 @@ var ConnectState = {
 };
 
 var toJSON = function(obj) {
-    return util.isString(obj) ? obj : JSON.stringify(obj);
+    return _.isString(obj) ? obj : JSON.stringify(obj);
 };
 
 var getDistinct = (list) => {
-    return util.sortBy(util.map(util.groupBy(list, (item) => {
+    return _.sortBy(_.map(_.groupBy(list, (item) => {
         return [item.type, item.targetId].join('_');
     }), function(items) {
-        return util.max(items, (item) => {
+        return _.max(items, (item) => {
             return item.sentTime;
         });
     }), (item) => {
@@ -47,13 +49,13 @@ var checkQuery = function(url, callback) {
     var query = url.query;
     var code = ErrorCode.empty_userId;
     var reason = ErrorCode.getError(code);
-    if (util.isEmpty(query)) {
+    if (_.isEmpty(query)) {
         callback.reject(reason);
         return;
     }
     var params = query.params;
     var userId = params.userId;
-    if (util.isUndefined(userId)) {
+    if (_.isUndefined(userId)) {
         callback.reject(reason);
         return;
     }
@@ -209,7 +211,7 @@ var sendMessage = (socket, params) => {
     params = JSON.parse(toJSON(params));
     var message = params.message;
     delete params.message;
-    util.extend(message, params);
+    _.extend(message, params);
 
     message.userId = socket.currentUserId;
 
@@ -249,7 +251,9 @@ var messageHandler = (ws, message) => {
             var socket = socketCache.get(targetId);
             params.direction = MessageDirection.RECEIVED;
             message.targetId = senderUserId;
-            DBUtil.user.find({userId: senderUserId}).then((users) => {
+            DBUtil.user.find({
+                userId: senderUserId
+            }).then((users) => {
                 var user = users[0];
                 delete message.uId;
                 message.target = user;
@@ -330,7 +334,7 @@ var messageHandler = (ws, message) => {
             });
         }
     };
-    var _topic = topic[message.topic] || util.noop;
+    var _topic = topic[message.topic] || _.noop;
     _topic();
 };
 
@@ -382,4 +386,8 @@ server.on('upgrade', (request, socket, body) => {
     }
 });
 
-server.listen(8585);
+server.listen(config.port);
+var tmpl = '启动成功，Server 地址 http://127.0.0.1:{port}';
+console.log(stringFormat(tmpl, {
+    port: config.port
+}));
